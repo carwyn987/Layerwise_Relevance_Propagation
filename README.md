@@ -1,6 +1,6 @@
 # LRP
 
-1. Environment
+1 Environment
 
 Conda environment creation steps and specifications:
 
@@ -13,8 +13,13 @@ Commands:
 2. conda activate lrp_mnist
 3. pip install -r requirements.txt
 
-1 Program Structure
+2 Program Structure
 
 mnist_base.py - base file user calls to run code. It contains code that parses arguments.
  1. --activation-name : choose between "sigmoid", "tanh", "relu". Sets the activations of the model to this. Default is sigmoid.
  2. --data_file_path : sets the data file. Should be set to the mnist datafile.
+
+
+ 3 Resources
+  - https://pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html 
+  - https://analyticsindiamag.com/guide-to-feed-forward-network-using-pytorch-with-mnist-dataset/ 

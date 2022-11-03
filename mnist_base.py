@@ -24,6 +24,3 @@ if __name__ == '__main__':
     print("\nLoading Data from MNIST")
     train_loader, test_loader = load_data(args.batch_size, args.data_file_path)
     print("Dataset loaded.")
-
-    # Resources:
-    # https://analyticsindiamag.com/guide-to-feed-forward-network-using-pytorch-with-mnist-dataset/
