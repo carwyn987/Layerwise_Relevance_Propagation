@@ -1,5 +1,5 @@
 import argparse
-from data import *
+from src.data import *
 from model import *
 from train import *
 
@@ -53,3 +53,6 @@ if __name__ == '__main__':
     # Train Loop
 
     train(train_loader, model, device, criterion, optimizer, args.epochs)
+
+    # Testing
+
