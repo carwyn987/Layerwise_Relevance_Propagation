@@ -1,7 +1,10 @@
 import argparse
 from data import *
+from model import *
 
 if __name__ == '__main__':
+
+    # Parse Command Line Arguments
 
     parser = argparse.ArgumentParser(
                     prog = 'mnist_base',
@@ -14,13 +17,32 @@ if __name__ == '__main__':
                             help='activation-name', default="sigmoid")
     parser.add_argument('--batch_size', type=int,
                             help='training batch size of data.', default=100)
+    parser.add_argument('--hidden_size', type=int,
+                            help='hidden layer size of network.', default=500)
+    parser.add_argument('--device', type=str, choices=("cuda", "cpu"),
+                            help='model device')
+    parser.add_argument('--loss', type=str, choices=("cross-entropy", "mse"),
+                            help='loss function', default="cross-entropy")
+    parser.add_argument('--optimizer', type=str, choices=("adam", "sgd"),
+                            help='optimizer', default="adam")
+    parser.add_argument('--learning-rate', type=float,
+                            help='learning rate', default=0.001)
 
     args = parser.parse_args()
+    print(args)
 
-    print("\ndata_file_path: ", args.data_file_path)
-    print("activation-name: ", args.activation_name)
-    print("batch-size: ", args.batch_size)
+    # Load MNIST Data
 
     print("\nLoading Data from MNIST")
     train_loader, test_loader = load_data(args.batch_size, args.data_file_path)
     print("Dataset loaded.")
+
+    # Define Network
+
+    input_size = 28*28 # 784
+    device = ("cuda" if torch.cuda.is_available() else "cpu") if args.device == None else args.device
+    model = SimpleNetwork(input_size, args.hidden_size, args.activation_name).to(device)
+    print("\n" + str(model) + " on " + device)
+
+    criterion = model.get_loss_function(args.loss)
+    optimizer = model.get_optimizer(args.optimizer, args.learning_rate)
