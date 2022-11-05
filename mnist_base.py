@@ -1,7 +1,8 @@
 import argparse
 from src.data import *
-from model import *
-from train import *
+from src.model import *
+from src.train import *
+from src.test import *
 
 if __name__ == '__main__':
 
@@ -30,6 +31,8 @@ if __name__ == '__main__':
                             help='learning rate', default=0.001)
     parser.add_argument('--epochs', type=int,
                             help='number of epochs', default=10)
+    parser.add_argument('--experiment-name', type=str,
+                            help='Name of experiment folder.')
 
     args = parser.parse_args()
     print(args)
@@ -56,3 +59,4 @@ if __name__ == '__main__':
 
     # Testing
 
+    print(accuracy(test_loader, model, device))
