@@ -1,6 +1,7 @@
 import argparse
 from data import *
 from model import *
+from train import *
 
 if __name__ == '__main__':
 
@@ -27,6 +28,8 @@ if __name__ == '__main__':
                             help='optimizer', default="adam")
     parser.add_argument('--learning-rate', type=float,
                             help='learning rate', default=0.001)
+    parser.add_argument('--epochs', type=int,
+                            help='number of epochs', default=10)
 
     args = parser.parse_args()
     print(args)
@@ -42,7 +45,11 @@ if __name__ == '__main__':
     input_size = 28*28 # 784
     device = ("cuda" if torch.cuda.is_available() else "cpu") if args.device == None else args.device
     model = SimpleNetwork(input_size, args.hidden_size, args.activation_name).to(device)
-    print("\n" + str(model) + " on " + device)
+    print("\n" + str(model) + " on " + device + "\n")
 
     criterion = model.get_loss_function(args.loss)
     optimizer = model.get_optimizer(args.optimizer, args.learning_rate)
+
+    # Train Loop
+
+    train(train_loader, model, device, criterion, optimizer, args.epochs)
