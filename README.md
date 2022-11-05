@@ -15,6 +15,10 @@ Commands:
 
 2 Program Structure
 
+Folders:
+ 1. src - contains all python files / modules with the exception of the user-called command line function mnist_base.py
+ 2. "experiment-name" - contains all train, test charts and data associated with a single call of the program with --experiment-name flag defined.
+
 mnist_base.py - base file user calls to run code. It contains code that parses arguments.
  1. --activation-name : choose between "sigmoid", "tanh", "relu". Sets the activations of the model to this. Default is sigmoid.
  2. --data_file_path : sets the data file. Should be set to the mnist datafile.
@@ -23,3 +27,4 @@ mnist_base.py - base file user calls to run code. It contains code that parses a
  3 Resources
   - https://pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html 
   - https://analyticsindiamag.com/guide-to-feed-forward-network-using-pytorch-with-mnist-dataset/ 
+  - https://github.com/python-engineer/pytorchTutorial 
