@@ -2,9 +2,9 @@ data_file_path: None
 activation_name: sigmoid
 batch_size: 100
 hidden_size: 500
-device: cpu
+device: None
 loss: cross-entropy
-optimizer: adam
+optimizer: sgd
 learning_rate: 0.001
-epochs: 1
+epochs: 10
 experiment_name: dev_experiment

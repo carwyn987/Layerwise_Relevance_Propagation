@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-def accuracy(test_loader, model, device):
+def standard_statistics(test_loader, model, device):
     with torch.no_grad():
         n_correct = 0
         n_samples = 0
@@ -13,7 +13,7 @@ def accuracy(test_loader, model, device):
             # max returns (value ,index)
             _, predicted = torch.max(outputs.data, 1)
             n_samples += labels.size(0)
-            n_correct += (predicted == labels).sum().item() 
+            n_correct += (predicted == labels).sum().item()
 
         acc = 100.0 * n_correct / n_samples
     
@@ -29,7 +29,7 @@ def predictSample(path, test_loader, model, device):
             numchosen = 1
             for images, correct_labels in test_loader:
                 model_imgs = images.reshape(-1, 28*28).to(device)
-                labels = np.argmax(model(model_imgs), axis=1)
+                labels = np.argmax(model(model_imgs).cpu(), axis=1)
                 for sample_indx in range(len(labels)):
                     if numchosen > 10:
                         break

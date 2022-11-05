@@ -31,7 +31,8 @@ class SimpleNetwork(nn.Module):
             case "cross-entropy":
                 loss_f = nn.CrossEntropyLoss()
             case "mse":
-                loss_f = nn.MSE()
+                raise NotImplementedError
+                loss_f = nn.MSELoss()
             case _:
                 raise NotImplementedError("The loss function was not recognized")
         return loss_f
@@ -41,7 +42,7 @@ class SimpleNetwork(nn.Module):
             case "adam":
                 optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate) 
             case "sgd":
-                optimizer = torch.optim.SGD(lr=learning_rate)
+                optimizer = torch.optim.SGD(self.parameters(), lr=learning_rate)
             case _:
                 raise NotImplementedError("The optimizer was not recognized")
         return optimizer
