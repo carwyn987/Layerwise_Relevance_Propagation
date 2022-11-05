@@ -1,3 +1,5 @@
+import os
+import glob
 import argparse
 from src.data import *
 from src.model import *
@@ -37,6 +39,42 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
 
+    # Experiment Save
+
+    path = None
+    if args.experiment_name:
+
+        # Development Experiment Name:
+        if "dev" in args.experiment_name:
+            path = args.experiment_name + "/"
+            try:
+                os.makedirs(path)
+            except FileExistsError:
+                print("\nDirectory already exists, deleting contents.")
+                files = glob.glob(path + "*")
+                for f in files:
+                    os.remove(f)
+            
+        else:
+            # Compute name of directory
+            path = args.experiment_name + "/"
+            append_num = 1
+            if os.path.exists(path):
+                path = args.experiment_name + "_" + str(append_num) + "/"
+            while os.path.exists(path):
+                append_num += 1
+                path = path[:-2] + str(append_num) + "/"
+
+            os.makedirs(path)
+            print("\nCreated experiment directory at ", path)
+
+        # Save program arguments
+        d = dict(vars(args))
+        info = open(path + "info.txt", 'w')
+        for key in d:
+            info.write(key + ": " + str(d[key]) + "\n") if d[key] else info.write(key + ": " + "None" + "\n")
+        info.close()
+
     # Load MNIST Data
 
     print("\nLoading Data from MNIST")
@@ -55,7 +93,7 @@ if __name__ == '__main__':
 
     # Train Loop
 
-    train(train_loader, model, device, criterion, optimizer, args.epochs)
+    train(train_loader, model, device, criterion, optimizer, args.epochs, path)
 
     # Testing
 

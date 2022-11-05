@@ -23,8 +23,11 @@ mnist_base.py - base file user calls to run code. It contains code that parses a
  1. --activation-name : choose between "sigmoid", "tanh", "relu". Sets the activations of the model to this. Default is sigmoid.
  2. --data_file_path : sets the data file. Should be set to the mnist datafile.
 
+3 Development Options
+ - If the experiment name contains "dev", then new folders with "_1", "_2", ..., "_n" will not be appended. The current folders contents will be deleted.
 
- 3 Resources
+
+4 Resources
   - https://pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html 
   - https://analyticsindiamag.com/guide-to-feed-forward-network-using-pytorch-with-mnist-dataset/ 
   - https://github.com/python-engineer/pytorchTutorial 
