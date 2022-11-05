@@ -98,3 +98,4 @@ if __name__ == '__main__':
     # Testing
 
     print(accuracy(test_loader, model, device))
+    predictSample(path, test_loader, model, device)

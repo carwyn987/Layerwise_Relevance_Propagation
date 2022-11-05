@@ -6,5 +6,5 @@ device: cpu
 loss: cross-entropy
 optimizer: adam
 learning_rate: 0.001
-epochs: 2
+epochs: 1
 experiment_name: dev_experiment
