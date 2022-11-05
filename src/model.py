@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class SimpleNetwork(nn.Module):
-    def __init__(self, input_size, hidden_size, activation) -> None:
+    def __init__(self, input_size, hidden_size, activation, model_path) -> None:
         super(SimpleNetwork, self).__init__()
 
         match activation:
@@ -46,3 +46,6 @@ class SimpleNetwork(nn.Module):
             case _:
                 raise NotImplementedError("The optimizer was not recognized")
         return optimizer
+
+    def save(self, path):
+        torch.save(self.state_dict(), path + "model.pt")

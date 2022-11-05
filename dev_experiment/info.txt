@@ -1,10 +1,11 @@
 data_file_path: None
-activation_name: sigmoid
+activation_name: relu
 batch_size: 100
 hidden_size: 500
 device: None
 loss: cross-entropy
-optimizer: sgd
+optimizer: adam
 learning_rate: 0.001
-epochs: 10
+epochs: 2
 experiment_name: dev_experiment
+model: dev_experiment/

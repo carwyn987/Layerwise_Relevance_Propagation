@@ -35,6 +35,8 @@ if __name__ == '__main__':
                             help='number of epochs', default=10)
     parser.add_argument('--experiment-name', type=str,
                             help='Name of experiment folder.')
+    parser.add_argument('--model', type=str,
+                            help='path to model, no need to include model name')
 
     args = parser.parse_args()
     print(args)
@@ -53,7 +55,8 @@ if __name__ == '__main__':
                 print("\nDirectory already exists, deleting contents.")
                 files = glob.glob(path + "*")
                 for f in files:
-                    os.remove(f)
+                    if not "model.pt" in f:
+                        os.remove(f)
             
         else:
             # Compute name of directory
@@ -84,18 +87,27 @@ if __name__ == '__main__':
     # Define Network
 
     input_size = 28*28 # 784
+    model_path = args.model if args.model else ""
     device = ("cuda" if torch.cuda.is_available() else "cpu") if args.device == None else args.device
-    model = SimpleNetwork(input_size, args.hidden_size, args.activation_name).to(device)
+    model = SimpleNetwork(input_size, args.hidden_size, args.activation_name, model_path).to(device)
+    if not model_path == "":
+            print("Loading saved model.")
+            model.load_state_dict(torch.load(model_path + "model.pt"))
     print("\n" + str(model) + " on " + device + "\n")
 
     criterion = model.get_loss_function(args.loss)
     optimizer = model.get_optimizer(args.optimizer, args.learning_rate)
 
     # Train Loop
-
-    train(train_loader, model, device, criterion, optimizer, args.epochs, path)
+    
+    if model_path == "":
+        train(train_loader, model, device, criterion, optimizer, args.epochs, path)
 
     # Testing
 
     print(standard_statistics(test_loader, model, device))
     predictSample(path, test_loader, model, device)
+
+    # Save model
+
+    model.save(path)
