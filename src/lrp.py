@@ -27,6 +27,6 @@ class LRP:
         for param_tensor in self.model.state_dict():
             print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
 
-        
+        # TO BE IMPLEMENTED
 
         return np.zeros((28,28))
