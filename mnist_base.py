@@ -1,5 +1,6 @@
 import os
 import glob
+import json
 import argparse
 from src.data import *
 from src.model import *
@@ -73,9 +74,8 @@ if __name__ == '__main__':
 
         # Save program arguments
         d = dict(vars(args))
-        info = open(path + "info.txt", 'w')
-        for key in d:
-            info.write(key + ": " + str(d[key]) + "\n") if d[key] else info.write(key + ": " + "None" + "\n")
+        info = open(path + "info.json", 'x')
+        info.write(json.dumps(d))
         info.close()
 
     # Load MNIST Data

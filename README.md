@@ -13,6 +13,10 @@ Commands:
 2. conda activate lrp_mnist
 3. pip install -r requirements.txt
 
+Example command line program execution:
+  $ python mnist_base.py --epochs 2 --experiment-name dev_experiment --activation-name relu --model 'dev_experiment/'
+  $ python lrp_eval.py --experiment "dev_experiment/"
+
 2 Program Structure
 
 Folders:
