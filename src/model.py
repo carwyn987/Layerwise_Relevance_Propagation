@@ -26,6 +26,12 @@ class SimpleNetwork(nn.Module):
         x = self.output_layer(x)
         return x
 
+    def forward_save_intermediate(self, x):
+        input_layer_out = self.input_layer(x)
+        activation_out = self.activation(input_layer_out)
+        output_out = self.output_layer(activation_out)
+        return input_layer_out, activation_out, output_out
+
     def get_loss_function(self, loss_function):
         match loss_function:
             case "cross-entropy":
