@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--experiment', type=str,
                     help='path to experiment folder, no need to include model name')
-    parser.add_argument('--lrp-rules', type=str, choices=("lrp-0", "lrp-epsilon", "lrp-gamma", "lrp-composite"),
+    parser.add_argument('--lrp-rule', type=str, choices=("lrp-0", "lrp-epsilon", "lrp-gamma", "lrp-composite"),
                             help='specify lrp rule to use', default="lrp-0")
 
     args = parser.parse_args()
@@ -47,17 +47,15 @@ if __name__ == '__main__':
     # Make a single prediction
 
     img = np.squeeze(next(iter(test_loader))[0][0])
-    outputs = model.single_pass(img).detach().numpy()
-    single_output = np.argmax(outputs)
-    print("Output: ", outputs, ", class argmax: ", single_output)
 
-    # Do LRP
+    # Perform LRP
 
-    
+    lrp_img = model.get_lrp_image(img, args.lrp_rule)
 
     # Save Visualization
 
     fig, axs = plt.subplots(1, 2, figsize=(6, 3))
     fig.suptitle('Input image vs LRP visualization')
     axs[0].imshow(img)
-    fig.savefig(experiment_dir + "lrp_" + args.lrp_rules + ".png")
+    axs[1].imshow(lrp_img)
+    fig.savefig(experiment_dir + "lrp_" + args.lrp_rule + ".png")
