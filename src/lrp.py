@@ -71,8 +71,11 @@ class LRP:
                 term_rel = flattened_image_device[i]*self.model.state_dict()["input_layer.weight"][j][i] # + self.model.state_dict()["output_layer.bias"][j]
 
             
-            total_rel = term_rel / denominator if denominator != 0 else 0
+            total_rel = term_rel / denominator if denominator != 0 else 1
             input_rel[i] = total_rel
+
+        print(input_rel)
+        input_rel[np.argmin(input_rel)] = np.max(input_rel)
 
         print("\nSum input: ", np.sum(input_rel), ". Sum hidden: ", np.sum(hidden_rel), ", Sum output: ", np.sum(output_rel), "\n")
         print("min: ", np.min(input_rel), ", max: ", np.max(input_rel))
@@ -80,5 +83,7 @@ class LRP:
         print("After normalizing to (0,255), min: ", np.min(input_rel), ", max: ", np.max(input_rel))
         # Assert relevance conservation properties
         # assert np.sum(input_rel) == np.sum(hidden_rel) and np.sum(hidden_rel) ==  np.sum(output_rel)
+
+        print(input_rel)
 
         return input_rel.reshape((28,28))

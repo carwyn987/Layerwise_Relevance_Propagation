@@ -44,18 +44,19 @@ if __name__ == '__main__':
     train_loader, test_loader = load_data(info['batch_size'], None)
     print("Dataset loaded.")
     
-    # Make a single prediction
+    for i in range(5):
+        # Make a single prediction
 
-    img = np.squeeze(next(iter(test_loader))[0][0])
+        img = np.squeeze(next(iter(test_loader))[0][i])
 
-    # Perform LRP
+        # Perform LRP
 
-    lrp_img = model.get_lrp_image(img, args.lrp_rule)
+        lrp_img = model.get_lrp_image(img, args.lrp_rule)
 
-    # Save Visualization
+        # Save Visualization
 
-    fig, axs = plt.subplots(1, 2, figsize=(6, 3))
-    fig.suptitle('Input image vs LRP visualization')
-    axs[0].imshow(img)
-    axs[1].imshow(lrp_img)
-    fig.savefig(experiment_dir + "lrp_" + args.lrp_rule + ".png")
+        fig, axs = plt.subplots(1, 2, figsize=(6, 3))
+        fig.suptitle('Input image vs LRP visualization')
+        axs[0].imshow(img)
+        axs[1].imshow(lrp_img)
+        fig.savefig(experiment_dir + "lrp_" + args.lrp_rule + "_" + str(i) + ".png")
