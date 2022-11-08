@@ -59,4 +59,15 @@ Learn more by running with the help command.
   - https://pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html 
   - https://analyticsindiamag.com/guide-to-feed-forward-network-using-pytorch-with-mnist-dataset/ 
   - https://github.com/python-engineer/pytorchTutorial 
-  - 
+  - Bach S, Binder A, Montavon G, Klauschen F, Müller K-R, Samek W (2015) On Pixel-Wise Explanations for Non-Linear Classifier Decisions by Layer-Wise Relevance Propagation. PLoS ONE 10(7): e0130140. https://doi.org/10.1371/journal.pone.0130140 
+  - Montavon, Grégoire & Binder, Alexander & Lapuschkin, Sebastian & Samek, Wojciech & Müller, Klaus-Robert. (2019). Layer-Wise Relevance Propagation: An Overview. 10.1007/978-3-030-28954-6_10. 
+  - Deng, L. (2012). The mnist database of handwritten digit images for machine learning research. IEEE Signal Processing Magazine, 29(6), 141–142.
+  - Bach, S., Samek, W., Mueller, K.R., Binder, A. and Montavon, G., Fraunhofer Gesellschaft zur Forderung der Angewandten Forschung eV and Technische Universitaet Berlin, 2018. Relevance score assignment for artificial neural networks. U.S. Patent Application 15/710,455.
+
+5 Next Steps
+ - Implement Gamma Rule
+ - Implement Composite Rule
+ - Make DNN model scalable and generalize code base to conform to whatever model is produced
+ - Generalize code base to support CNN Models
+ - Generalize data loading to support other image datasets
+ - Evaluation with removal of important sections of images and test performance. Note that a separate evaluation script must be written for this.
