@@ -37,53 +37,63 @@ class LRP:
         # Define arrays to store intermediate layer relevances
         input_rel = np.zeros((input_size))
         hidden_rel = np.zeros((hidden_size))
-        output_rel = outputs
 
-        # Compute Hidden Relevences
+        # Compute Relevences
 
         # First get activations at hidden layer
-        flattened_image_device = np.squeeze(img.reshape(-1, 28*28)).to(self.device)
-        input_layer_out, activation_out, output_out = self.model.forward_save_intermediate(flattened_image_device)
+        flattened_image = np.squeeze(img.reshape(-1, 28*28)).to(self.device)
+        input_layer_out, activation_out, output_out = self.model.forward_save_intermediate(flattened_image)
         activation_out = np.squeeze(activation_out)
         input_layer_out = np.squeeze(input_layer_out)
-        print("Activation out: ", activation_out.shape, ", Input out: ", input_layer_out.shape)
 
-        # For all nodes in hidden layer, compute relevance (ISSUE EXISTS IN THIS CODE)
+        if lrp_rule == "0":
+            epsilon = 0
+            return self.lrp_0_and_epsilon(epsilon, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image)
+        elif lrp_rule == "epsilon":
+            epsilon = 0.1
+            return self.lrp_0_and_epsilon(epsilon, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image)
+        elif lrp_rule == "gamma":
+            raise NotImplementedError("LRP Rule - Gamma")
+        elif lrp_rule == "composite":
+            raise NotImplementedError("LRP Rule - Composite")
+        else:
+            raise NotImplementedError("LRP Rule was not recognized.")
+        
+
+    def lrp_0_and_epsilon(self, epsilon, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image):
+        # For all nodes in hidden layer, compute relevance
         for i in range(hidden_size):
-            total_rel = 0
-            denominator = 0
+            denominator = epsilon
             for j in range(output_size):
-                denominator += activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] # + self.model.state_dict()["output_layer.bias"][j]
+                denominator += activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j]
+            if epsilon == 0 and denominator <= 0.00001:
+                denominator = 1
+            term_rel = 0            
             for j in range(output_size):
-                term_rel = activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] # + self.model.state_dict()["output_layer.bias"][j]
+                term_rel += (activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j])/denominator
 
-            total_rel = term_rel / denominator
-            hidden_rel[i] = total_rel
+            hidden_rel[i] = term_rel
 
         # Compute Input Relevences
-        # For all nodes in hidden layer, compute relevance (ISSUE EXISTS IN THIS CODE)
+        # For all nodes in hidden layer, compute relevance
         for i in range(input_size):
-            total_rel = 0
-            denominator = 0
+            denominator = epsilon
             for j in range(hidden_size):
-                denominator += flattened_image_device[i]*self.model.state_dict()["input_layer.weight"][j][i] # + self.model.state_dict()["output_layer.bias"][j]
+                denominator += flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j]
+            if epsilon == 0 and denominator <= 0.00001:
+                denominator = 1
+            term_rel = 0
             for j in range(hidden_size):
-                term_rel = flattened_image_device[i]*self.model.state_dict()["input_layer.weight"][j][i] # + self.model.state_dict()["output_layer.bias"][j]
+                term_rel += (flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j])/denominator
 
-            
-            total_rel = term_rel / denominator if denominator != 0 else 1
-            input_rel[i] = total_rel
+            input_rel[i] = term_rel
 
-        print(input_rel)
-        input_rel[np.argmin(input_rel)] = np.max(input_rel)
-
-        print("\nSum input: ", np.sum(input_rel), ". Sum hidden: ", np.sum(hidden_rel), ", Sum output: ", np.sum(output_rel), "\n")
-        print("min: ", np.min(input_rel), ", max: ", np.max(input_rel))
-        input_rel = (255*(input_rel - np.min(input_rel))/np.ptp(input_rel)).astype(int)
-        print("After normalizing to (0,255), min: ", np.min(input_rel), ", max: ", np.max(input_rel))
+        # print(input_rel)
+        # print("\nSum input: ", np.sum(input_rel), ". Sum hidden: ", np.sum(hidden_rel), ", Sum output: ", np.sum(output_rel), "\n")
+        # print("min: ", np.min(input_rel), ", max: ", np.max(input_rel))
+        # input_rel = (255*(input_rel - np.min(input_rel))/np.ptp(input_rel)).astype(int)
+        # print("After normalizing to (0,255), min: ", np.min(input_rel), ", max: ", np.max(input_rel))
         # Assert relevance conservation properties
         # assert np.sum(input_rel) == np.sum(hidden_rel) and np.sum(hidden_rel) ==  np.sum(output_rel)
-
-        print(input_rel)
-
+        
         return input_rel.reshape((28,28))

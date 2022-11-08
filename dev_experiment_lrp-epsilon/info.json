@@ -1,0 +1,1 @@
+{"data_file_path": null, "activation_name": "sigmoid", "batch_size": 100, "hidden_size": 500, "device": null, "loss": "cross-entropy", "optimizer": "adam", "learning_rate": 0.001, "epochs": 5, "experiment_name": "dev_experiment_lrp-epsilon", "model": null}

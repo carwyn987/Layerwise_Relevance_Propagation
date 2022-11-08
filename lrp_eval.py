@@ -18,8 +18,10 @@ if __name__ == '__main__':
 
     parser.add_argument('--experiment', type=str,
                     help='path to experiment folder, no need to include model name')
-    parser.add_argument('--lrp-rule', type=str, choices=("lrp-0", "lrp-epsilon", "lrp-gamma", "lrp-composite"),
-                            help='specify lrp rule to use', default="lrp-0")
+    parser.add_argument('--lrp-rule', type=str, choices=("0", "epsilon", "gamma", "composite"),
+                            help='specify lrp rule to use', default="0")
+    parser.add_argument('--epsilon', type=float,
+                            help='specify epsilon value for epsilon rule. a float, ideally in the range (0, 1]', default=0.1)
 
     args = parser.parse_args()
     print(args)
