@@ -22,6 +22,8 @@ if __name__ == '__main__':
                             help='specify lrp rule to use', default="0")
     parser.add_argument('--epsilon', type=float,
                             help='specify epsilon value for epsilon rule. a float, ideally in the range (0, 1]', default=0.1)
+    parser.add_argument('--gamma', type=float,
+                            help='specify gamma value for gamma rule. a float, ideally in the range (0, 1]', default=0.1)
 
     args = parser.parse_args()
     print(args)
@@ -53,7 +55,7 @@ if __name__ == '__main__':
 
         # Perform LRP
 
-        lrp_img = model.get_lrp_image(img, args.lrp_rule)
+        lrp_img = model.get_lrp_image(img, args.lrp_rule, args.epsilon, args.gamma)
 
         # Save Visualization
 

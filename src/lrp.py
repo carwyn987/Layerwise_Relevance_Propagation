@@ -16,7 +16,7 @@ class LRP:
         output = self.model(single_img).cpu()
         return output
 
-    def get_lrp_image(self, img, lrp_rule):
+    def get_lrp_image(self, img, lrp_rule, epsilon, gamma):
         # Get original image
         outputs = self.single_pass(img).detach().numpy()
         single_output = np.argmax(outputs)
@@ -50,12 +50,12 @@ class LRP:
             epsilon = 0
             return self.lrp_0_and_epsilon(epsilon, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image)
         elif lrp_rule == "epsilon":
-            epsilon = 0.1
             return self.lrp_0_and_epsilon(epsilon, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image)
         elif lrp_rule == "gamma":
-            raise NotImplementedError("LRP Rule - Gamma")
+            epsilon = 0.1
+            return self.lrp_gamma(epsilon, gamma, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image)
         elif lrp_rule == "composite":
-            raise NotImplementedError("LRP Rule - Composite")
+            return self.lrp_composite(epsilon, gamma, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image)
         else:
             raise NotImplementedError("LRP Rule was not recognized.")
         
@@ -95,5 +95,81 @@ class LRP:
         # print("After normalizing to (0,255), min: ", np.min(input_rel), ", max: ", np.max(input_rel))
         # Assert relevance conservation properties
         # assert np.sum(input_rel) == np.sum(hidden_rel) and np.sum(hidden_rel) ==  np.sum(output_rel)
+        
+        return input_rel.reshape((28,28))
+
+    def lrp_gamma(self, epsilon, gamma, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image):
+        # For all nodes in hidden layer, compute relevance
+        for i in range(hidden_size):
+            denominator = epsilon
+            for j in range(output_size):
+                denominator += activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j]
+                if self.model.state_dict()["input_layer.weight"][j][i] > 0:
+                    denominator += gamma*self.model.state_dict()["input_layer.weight"][j][i]
+            if epsilon == 0 and denominator <= 0.00001:
+                denominator = 1
+            term_rel = 0            
+            for j in range(output_size):
+                term_rel += (activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j])
+                if self.model.state_dict()["input_layer.weight"][j][i] > 0:
+                    term_rel += gamma*self.model.state_dict()["input_layer.weight"][j][i]
+                term_rel /= denominator
+
+            hidden_rel[i] = term_rel
+
+        # Compute Input Relevences
+        # For all nodes in hidden layer, compute relevance
+        for i in range(input_size):
+            denominator = epsilon
+            for j in range(hidden_size):
+                denominator += flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j]
+                if self.model.state_dict()["input_layer.weight"][j][i] > 0:
+                    denominator += gamma*self.model.state_dict()["input_layer.weight"][j][i]
+            if epsilon == 0 and denominator <= 0.00001:
+                denominator = 1
+            term_rel = 0
+            for j in range(hidden_size):
+                term_rel += (flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j])
+                if self.model.state_dict()["input_layer.weight"][j][i] > 0:
+                    term_rel += gamma*self.model.state_dict()["input_layer.weight"][j][i]
+                term_rel /= denominator
+
+            input_rel[i] = term_rel
+        
+        return input_rel.reshape((28,28))
+
+    def lrp_composite(self, epsilon, gamma, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image):
+        # For all nodes in hidden layer, compute relevance
+        for i in range(hidden_size):
+            denominator = epsilon
+            for j in range(output_size):
+                denominator += activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j]
+                if self.model.state_dict()["input_layer.weight"][j][i] > 0:
+                    denominator += gamma*self.model.state_dict()["input_layer.weight"][j][i]
+            if epsilon == 0 and denominator <= 0.00001:
+                denominator = 1
+            term_rel = 0            
+            for j in range(output_size):
+                term_rel += (activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j])
+                if self.model.state_dict()["input_layer.weight"][j][i] > 0:
+                    term_rel += gamma*self.model.state_dict()["input_layer.weight"][j][i]
+                term_rel /= denominator
+
+            hidden_rel[i] = term_rel
+
+        # Compute Input Relevences
+        # For all nodes in hidden layer, compute relevance
+        for i in range(input_size):
+            denominator = epsilon
+            for j in range(hidden_size):
+                denominator += flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j]
+            if epsilon == 0 and denominator <= 0.00001:
+                denominator = 1
+            term_rel = 0
+            for j in range(hidden_size):
+                term_rel += (flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j])/denominator
+
+            input_rel[i] = term_rel
+
         
         return input_rel.reshape((28,28))
