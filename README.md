@@ -65,9 +65,12 @@ Learn more by running with the help command.
   - Bach, S., Samek, W., Mueller, K.R., Binder, A. and Montavon, G., Fraunhofer Gesellschaft zur Forderung der Angewandten Forschung eV and Technische Universitaet Berlin, 2018. Relevance score assignment for artificial neural networks. U.S. Patent Application 15/710,455.
 
 5 Next Steps
- - Implement Gamma Rule
- - Implement Composite Rule
  - Make DNN model scalable and generalize code base to conform to whatever model is produced
  - Generalize code base to support CNN Models
  - Generalize data loading to support other image datasets
  - Evaluation with removal of important sections of images and test performance. Note that a separate evaluation script must be written for this.
+
+6 Goals
+ - Get LRP Rules Fixed / Verified by Sunday (11/13/22)
+ - Generalize the model / dataset by 11/18/22
+ - Evaluation (Testing different LRP rules + important image region removal vs unimportant removal)
