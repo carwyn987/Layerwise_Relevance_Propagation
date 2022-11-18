@@ -101,12 +101,12 @@ class LRP:
     def lrp_gamma(self, epsilon, gamma, input_size, hidden_size, output_size, activation_out, input_rel, hidden_rel, flattened_image):
         # For all nodes in hidden layer, compute relevance
         for i in range(hidden_size):
-            denominator = epsilon
+            denominator = 0
             for j in range(output_size):
                 denominator += activation_out[i]*self.model.state_dict()["output_layer.weight"][j][i] + self.model.state_dict()["output_layer.bias"][j]
                 if self.model.state_dict()["input_layer.weight"][j][i] > 0:
                     denominator += gamma*self.model.state_dict()["input_layer.weight"][j][i]
-            if epsilon == 0 and denominator <= 0.00001:
+            if denominator <= 0.00001:
                 denominator = 1
             term_rel = 0            
             for j in range(output_size):
@@ -120,12 +120,12 @@ class LRP:
         # Compute Input Relevences
         # For all nodes in hidden layer, compute relevance
         for i in range(input_size):
-            denominator = epsilon
+            denominator = 0
             for j in range(hidden_size):
                 denominator += flattened_image[i]*self.model.state_dict()["input_layer.weight"][j][i] + self.model.state_dict()["input_layer.bias"][j]
                 if self.model.state_dict()["input_layer.weight"][j][i] > 0:
                     denominator += gamma*self.model.state_dict()["input_layer.weight"][j][i]
-            if epsilon == 0 and denominator <= 0.00001:
+            if denominator <= 0.00001:
                 denominator = 1
             term_rel = 0
             for j in range(hidden_size):
