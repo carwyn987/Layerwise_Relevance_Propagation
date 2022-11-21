@@ -1,4 +1,5 @@
 import torch
+import random
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -46,3 +47,72 @@ def predictSample(path, test_loader, model, device):
                         break
 
     fig.savefig(path + "predict_sample.png")
+
+def predictFeatureExtractionSample(path, img, lrp_img, label, model, device):
+    with torch.no_grad():
+        model_img = img.reshape(28*28).to(device)
+        predicted_labels = model(model_img).cpu().numpy()
+        predicted_label = np.argmax(predicted_labels)
+
+        # Original image file paths
+        img_save_file = path + "original" + ".png"
+        txt_save_file = path + "original" + ".txt"
+        np.savetxt(txt_save_file, predicted_labels)
+
+        # Save original image
+        fig, axs = plt.subplots(1, 1, figsize=(6, 3))
+        fig.suptitle('Input image')
+        axs.imshow(img)
+        fig.savefig(img_save_file)
+        
+        # Add correct label
+        with open(txt_save_file, "a") as myfile:
+            myfile.write("Label: " + str(predicted_label))
+
+        # Compute important image
+
+        # Using the lrp-image, find area of maximum importance (values) and replace with mean of entire image
+        mean_image = np.mean(model_img.cpu().numpy())
+        
+        # Replace top twentieth of the maximum values with mean
+        lrp_img_save = np.array(lrp_img, copy=True) 
+        important_feature_removal_img = model_img.cpu().numpy()
+        for _ in range(150):
+            important_feature_removal_img[np.argmin(lrp_img)] = mean_image
+            lrp_img[np.argmin(lrp_img)] = lrp_img[np.argmax(lrp_img)]
+
+        # Important image
+        img_save_file = path + "important_feature_removal" + ".png"
+        txt_save_file = path + "important_feature_removal" + ".txt"
+        predicted_important_labels = model(torch.from_numpy(important_feature_removal_img).to(device)).cpu().numpy()
+        np.savetxt(txt_save_file, predicted_important_labels)
+
+        important_img = important_feature_removal_img.reshape((28, 28))
+
+        # Save important image
+        fig, axs = plt.subplots(1, 1, figsize=(6, 3))
+        fig.suptitle('Important Feature Removal Image')
+        axs.imshow(important_img)
+        fig.savefig(img_save_file)
+
+        # Compute important image
+        
+        # Replace top twentieth of the maximum values with mean
+        unimportant_feature_removal_img = model_img.cpu().numpy()
+        for _ in range(150):
+            unimportant_feature_removal_img[np.argmax(lrp_img_save)] = mean_image
+            lrp_img_save[np.argmax(lrp_img_save)] = lrp_img_save[np.argmin(lrp_img_save)]
+
+        # Important image
+        img_save_file = path + "unimportant_feature_removal" + ".png"
+        txt_save_file = path + "unimportant_feature_removal" + ".txt"
+        predicted_unimportant_labels = model(torch.from_numpy(unimportant_feature_removal_img).to(device)).cpu().numpy()
+        np.savetxt(txt_save_file, predicted_unimportant_labels)
+
+        unimportant_img = unimportant_feature_removal_img.reshape((28, 28))
+
+        # Save important image
+        fig, axs = plt.subplots(1, 1, figsize=(6, 3))
+        fig.suptitle('Unimportant Feature Removal Image')
+        axs.imshow(unimportant_img)
+        fig.savefig(img_save_file)

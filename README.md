@@ -14,8 +14,10 @@ Commands:
 3. pip install -r requirements.txt
 
 Example command line program execution:
-  $ python mnist_base.py --epochs 2 --experiment-name dev_experiment --activation-name relu --model 'dev_experiment/'
+  $ python mnist_base.py --epochs 2 --experiment-name dev_experiment --activation-name relu 
+  ### --model 'dev_experiment/' ###
   $ python lrp_eval.py --experiment "dev_experiment/"
+  $ python lrp_feature_removal_eval.py --experiment "dev_experiment_lrp-gamma/" --lrp-rule gamma
 
 2 Program Structure
 
@@ -29,6 +31,7 @@ Folders:
   - python mnist_base.py --epochs 5 --experiment-name dev_experiment_lrp-epsilon --activation-name sigmoid
   - python lrp_eval.py --experiment "dev_experiment_lrp-epsilon/" --lrp-rule epsilon --epsilon 0.2
  5. "data/", contains all mnist data
+ 6. "experiment_folder/feature_removal" contains an lrp image, and one classification with important features removed, one with unimportant features removed, and the original image. Each image is accompanied by a text file showing the classification confidences.
 
 Base Python Files:
 
