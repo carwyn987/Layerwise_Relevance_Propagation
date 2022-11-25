@@ -48,10 +48,10 @@ def predictSample(path, test_loader, model, device):
 
     fig.savefig(path + "predict_sample.png")
 
-def predictFeatureExtractionSample(path, img, lrp_img, label, model, device):
+def predictFeatureExtractionSample(path, img, lrp_img, label, model, device, args):
     with torch.no_grad():
         model_img = img.reshape(28*28).to(device)
-        predicted_labels = model(model_img).cpu().numpy()
+        predicted_labels = model.model(model_img).cpu().numpy()
         predicted_label = np.argmax(predicted_labels)
 
         # Original image file paths
@@ -84,7 +84,7 @@ def predictFeatureExtractionSample(path, img, lrp_img, label, model, device):
         # Important image
         img_save_file = path + "important_feature_removal" + ".png"
         txt_save_file = path + "important_feature_removal" + ".txt"
-        predicted_important_labels = model(torch.from_numpy(important_feature_removal_img).to(device)).cpu().numpy()
+        predicted_important_labels = model.model(torch.from_numpy(important_feature_removal_img).to(device)).cpu().numpy()
         np.savetxt(txt_save_file, predicted_important_labels)
 
         important_img = important_feature_removal_img.reshape((28, 28))
@@ -106,7 +106,7 @@ def predictFeatureExtractionSample(path, img, lrp_img, label, model, device):
         # Important image
         img_save_file = path + "unimportant_feature_removal" + ".png"
         txt_save_file = path + "unimportant_feature_removal" + ".txt"
-        predicted_unimportant_labels = model(torch.from_numpy(unimportant_feature_removal_img).to(device)).cpu().numpy()
+        predicted_unimportant_labels = model.model(torch.from_numpy(unimportant_feature_removal_img).to(device)).cpu().numpy()
         np.savetxt(txt_save_file, predicted_unimportant_labels)
 
         unimportant_img = unimportant_feature_removal_img.reshape((28, 28))
@@ -115,4 +115,26 @@ def predictFeatureExtractionSample(path, img, lrp_img, label, model, device):
         fig, axs = plt.subplots(1, 1, figsize=(6, 3))
         fig.suptitle('Unimportant Feature Removal Image')
         axs.imshow(unimportant_img)
+        fig.savefig(img_save_file)
+
+        print(" Getting LRP Images ...")
+
+        # Save LRP images
+        lrp_img_unimportant = model.get_lrp_image(torch.from_numpy(unimportant_feature_removal_img).to(device), args.lrp_rule, args.epsilon, args.gamma)
+        print("     LRP img 1 received ...")
+        lrp_img_important = model.get_lrp_image(torch.from_numpy(important_feature_removal_img).to(device), args.lrp_rule, args.epsilon, args.gamma)
+        print("     LRP img 2 received ...")
+
+        # Save important image lrp
+        img_save_file = path + "unimportant_feature_removal_lrp" + ".png"
+        fig, axs = plt.subplots(1, 1, figsize=(6, 3))
+        fig.suptitle('Unimportant Feature Removal Image LRP')
+        axs.imshow(lrp_img_unimportant)
+        fig.savefig(img_save_file)
+
+        # Save important image lrp
+        img_save_file = path + "important_feature_removal_lrp" + ".png"
+        fig, axs = plt.subplots(1, 1, figsize=(6, 3))
+        fig.suptitle('Important Feature Removal Image LRP')
+        axs.imshow(lrp_img_important)
         fig.savefig(img_save_file)

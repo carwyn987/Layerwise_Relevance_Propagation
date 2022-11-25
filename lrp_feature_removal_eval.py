@@ -62,7 +62,12 @@ if __name__ == '__main__':
     train_loader, test_loader = load_data(info['batch_size'], None)
     print("Dataset loaded.")
     
-    for i in range(1):
+    oldpath = path
+    
+    for i in range(5):
+        path = oldpath + str(i) + "/"
+        os.makedirs(path)
+
         # Make a single prediction
 
         imgs, labels = next(iter(test_loader))
@@ -71,6 +76,7 @@ if __name__ == '__main__':
 
         # Perform LRP
 
+        print("LRP running on original image sample ", i)
         lrp_img = model.get_lrp_image(img, args.lrp_rule, args.epsilon, args.gamma)
 
         # Save Visualization
@@ -81,5 +87,5 @@ if __name__ == '__main__':
         axs[1].imshow(lrp_img)
         fig.savefig(path + "lrp_" + args.lrp_rule + "_" + str(i) + ".png")
 
-        important = True
-        predictFeatureExtractionSample(path, img, lrp_img.reshape(28*28), label, model.model, device)
+        print("Feature Extraction running on sample ", i)
+        predictFeatureExtractionSample(path, img, lrp_img.reshape(28*28), label, model, device, args)
