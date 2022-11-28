@@ -15,7 +15,7 @@ Commands:
 
 Example command line program execution:
   $ python mnist_base.py --epochs 2 --experiment-name dev_experiment --activation-name relu 
-  ### --model 'dev_experiment/' ###
+  ###### --model 'dev_experiment/' ######
   $ python lrp_eval.py --experiment "dev_experiment/"
   $ python lrp_feature_removal_eval.py --experiment "dev_experiment_lrp-gamma/" --lrp-rule gamma
 
@@ -53,7 +53,14 @@ lrp_eval.py - base file user calls to run lrp. It contains code that parses argu
  1. --experiment
  2. --lrp-rule
  3. --epsilon
+ 4. --gamma
 Learn more by running with the help command.
+
+lrp_feature_removal_eval.py - evaluate prediction confidence when important and not important image sections are removed.
+ 1. --experiment
+ 2. --lrp-rule
+ 3. --epsilon
+ 4. --gamma
 
 3 Development Options
  - If the experiment name contains "dev", then new folders with "_1", "_2", ..., "_n" will not be appended. The current folders contents will be deleted.
